@@ -1,0 +1,17 @@
+[package]
+name = "nightshift-worker"
+version = "0.1.0"
+edition = "2021"
+description = "Cloudflare Workers target for Nightshift (worker-rs)"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+nightshift-core = { path = "../nightshift-core" }
+nightshift-adapters = { path = "../nightshift-adapters" }
+worker = "0.4"
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+futures = { workspace = true }

@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://nightshift.dev/schemas/event.json",
+  "title": "NightshiftEvent",
+  "description": "Canonical schema for Nightshift telemetry events",
+  "definitions": {
+    "EventType": {
+      "type": "string",
+      "enum": ["track", "identify", "error"],
+      "description": "The category of telemetry event"
+    },
+    "EventContext": {
+      "type": "object",
+      "description": "Implicit context automatically attached by the client SDK",
+      "required": ["viewport", "url", "sessionId", "appVersion", "timestamp"],
+      "additionalProperties": false,
+      "properties": {
+        "viewport": {
+          "type": "string",
+          "description": "Browser viewport dimensions (e.g. '390x844')",
+          "pattern": "^\\d+x\\d+$"
+        },
+        "url": {
+          "type": "string",
+          "description": "Current page URL or route path"
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Anonymous session identifier (prefixed with 'anon_')"
+        },
+        "appVersion": {
+          "type": "string",
+          "description": "Application version or git commit hash"
+        },
+        "timestamp": {
+          "type": "integer",
+          "description": "Unix epoch in milliseconds"
+        },
+        "ip": {
+          "type": "string",
+          "description": "Client IP address — enriched server-side, stripped before fan-out"
+        },
+        "userAgent": {
+          "type": "string",
+          "description": "Browser user-agent string — enriched server-side"
+        },
+        "country": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code — enriched from geo lookup server-side"
+        }
+      }
+    },
+    "SerializedError": {
+      "type": "object",
+      "required": ["message", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "name": {
+          "type": "string",
+          "description": "Error constructor name (e.g. 'TypeError', 'RangeError')"
+        },
+        "stack": {
+          "type": "string",
+          "description": "Stack trace string (may be minified — demangled server-side)"
+        }
+      }
+    },
+    "BatchedEvent": {
+      "type": "object",
+      "required": ["type", "context"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/EventType"
+        },
+        "event": {
+          "type": "string",
+          "description": "Event name for track events (e.g. 'Checkout_Started')"
+        },
+        "userId": {
+          "type": "string",
+          "description": "User identifier for identify events"
+        },
+        "properties": {
+          "type": "object",
+          "description": "Arbitrary event properties for track events",
+          "additionalProperties": true
+        },
+        "traits": {
+          "type": "object",
+          "description": "User trait properties for identify events",
+          "additionalProperties": true
+        },
+        "error": {
+          "$ref": "#/definitions/SerializedError"
+        },
+        "context": {
+          "$ref": "#/definitions/EventContext"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "required": ["batch"],
+  "additionalProperties": false,
+  "properties": {
+    "batch": {
+      "type": "array",
+      "description": "Array of telemetry events to ingest",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "$ref": "#/definitions/BatchedEvent"
+      }
+    }
+  }
+}

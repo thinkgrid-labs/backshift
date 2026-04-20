@@ -1,0 +1,29 @@
+name = "nightshift-worker"
+main = "build/worker/shim.mjs"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[build]
+command = "cargo install -q worker-build && worker-build --release"
+
+# Required secrets — set via: wrangler secret put <NAME>
+# GA4_MEASUREMENT_ID
+# GA4_API_SECRET
+# SENTRY_DSN
+# SENTRY_RELEASE
+# SENTRY_ENVIRONMENT
+# MIXPANEL_TOKEN
+# POSTHOG_API_KEY
+# POSTHOG_ENDPOINT (optional, for self-hosted)
+# WEBHOOK_URL
+# WEBHOOK_SECRET (optional)
+
+[vars]
+# Non-secret config (can be overridden per environment)
+# SENTRY_ENVIRONMENT = "production"
+
+[env.staging]
+name = "nightshift-worker-staging"
+
+[env.staging.vars]
+# SENTRY_ENVIRONMENT = "staging"

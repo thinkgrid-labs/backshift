@@ -1,0 +1,45 @@
+name: Client CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/**'
+  pull_request:
+    paths:
+      - 'packages/**'
+
+jobs:
+  test:
+    name: Test & Build (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['18', '20', '22']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build @nightshift/schema
+        run: pnpm --filter @nightshift/schema build
+
+      - name: Build @nightshift/client (enforces 5kb size limit)
+        run: pnpm --filter @nightshift/client build
+
+      - name: Test @nightshift/client
+        run: pnpm --filter @nightshift/client test --coverage
+
+      - name: Typecheck
+        run: pnpm --filter @nightshift/client typecheck

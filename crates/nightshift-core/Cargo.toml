@@ -1,0 +1,16 @@
+[package]
+name = "nightshift-core"
+version = "0.1.0"
+edition = "2021"
+description = "Shared types, PII sanitization, and dedup cache for Nightshift"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+regex = { workspace = true }
+once_cell = { workspace = true }
+uuid = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }

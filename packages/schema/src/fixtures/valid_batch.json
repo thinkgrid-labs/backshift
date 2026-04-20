@@ -1,0 +1,43 @@
+{
+  "batch": [
+    {
+      "type": "track",
+      "event": "Checkout_Started",
+      "properties": { "cartValue": 150, "currency": "USD" },
+      "context": {
+        "viewport": "390x844",
+        "url": "/checkout",
+        "sessionId": "anon_abc123def456",
+        "appVersion": "v1.2.0",
+        "timestamp": 1700000000000
+      }
+    },
+    {
+      "type": "identify",
+      "userId": "user_123",
+      "traits": { "plan": "premium", "email": "user@example.com" },
+      "context": {
+        "viewport": "1440x900",
+        "url": "/profile",
+        "sessionId": "anon_abc123def456",
+        "appVersion": "v1.2.0",
+        "timestamp": 1700000001000
+      }
+    },
+    {
+      "type": "error",
+      "error": {
+        "message": "Payment gateway timeout",
+        "name": "Error",
+        "stack": "Error: Payment gateway timeout\n    at checkout (main.abc123.js:1:234)"
+      },
+      "context": {
+        "viewport": "390x844",
+        "url": "/checkout/pay",
+        "sessionId": "anon_abc123def456",
+        "appVersion": "v1.2.0",
+        "timestamp": 1700000002000
+      }
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+# Rust
+/target/
+Cargo.lock
+
+# Node
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+.next/
+out/
+
+# Turbo
+.turbo/
+
+# Environment
+.env.local
+.env.*.local
+!.env.local.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Coverage
+coverage/
+lcov.info
+
+# Wrangler
+.wrangler/
+worker-build/
