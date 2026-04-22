@@ -2,12 +2,12 @@ import { BatchQueue } from './batch.js';
 import { buildContext } from './context.js';
 import { OfflineQueue } from './storage.js';
 import { createTransport } from './transport.js';
-import type { BatchedEvent, IngestBatch, NightshiftConfig, SerializedError } from './types.js';
+import type { BatchedEvent, IngestBatch, BackshiftConfig, SerializedError } from './types.js';
 
-export class NightshiftClient<
+export class BackshiftClient<
   TEvents extends Record<string, Record<string, unknown>> = Record<string, Record<string, unknown>>,
 > {
-  private readonly config: Required<NightshiftConfig<TEvents>>;
+  private readonly config: Required<BackshiftConfig<TEvents>>;
   private readonly queue: BatchQueue;
   private readonly transport = createTransport();
   private readonly offline = new OfflineQueue();
@@ -15,7 +15,7 @@ export class NightshiftClient<
 
   private _pageviewCleanup: (() => void) | null = null;
 
-  constructor(config: NightshiftConfig<TEvents>) {
+  constructor(config: BackshiftConfig<TEvents>) {
     this.config = {
       appVersion: 'unknown',
       flushInterval: 5000,
@@ -138,20 +138,20 @@ function setupAutoPageview(fire: () => void): () => void {
 }
 
 // Singleton facade
-let _instance: NightshiftClient<Record<string, Record<string, unknown>>> | null = null;
+let _instance: BackshiftClient<Record<string, Record<string, unknown>>> | null = null;
 
-function assertInstance(): NightshiftClient<Record<string, Record<string, unknown>>> {
-  if (!_instance) throw new Error('[Nightshift] Call Nightshift.init() before using the SDK.');
+function assertInstance(): BackshiftClient<Record<string, Record<string, unknown>>> {
+  if (!_instance) throw new Error('[Backshift] Call Backshift.init() before using the SDK.');
   return _instance;
 }
 
-export const Nightshift = {
+export const Backshift = {
   init<TEvents extends Record<string, Record<string, unknown>>>(
-    config: NightshiftConfig<TEvents>
-  ): NightshiftClient<TEvents> {
+    config: BackshiftConfig<TEvents>
+  ): BackshiftClient<TEvents> {
     if (_instance) _instance.destroy();
-    const client = new NightshiftClient<TEvents>(config);
-    _instance = client as unknown as NightshiftClient<Record<string, Record<string, unknown>>>;
+    const client = new BackshiftClient<TEvents>(config);
+    _instance = client as unknown as BackshiftClient<Record<string, Record<string, unknown>>>;
     return client;
   },
 

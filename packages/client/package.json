@@ -1,5 +1,5 @@
 {
-  "name": "@nightshift/client",
+  "name": "@backshift/client",
   "version": "0.1.0",
   "description": "Zero-overhead telemetry client for modern web applications. Under 5kb.",
   "type": "module",
@@ -25,7 +25,7 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "@nightshift/schema": "workspace:*",
+    "@backshift/schema": "workspace:*",
     "@vitest/coverage-v8": "^2.1.0",
     "happy-dom": "^15.0.0",
     "tsup": "^8.3.0",

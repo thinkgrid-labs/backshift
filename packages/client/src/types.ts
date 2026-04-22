@@ -35,7 +35,7 @@ export interface IngestBatch {
   batch: BatchedEvent[];
 }
 
-export interface NightshiftConfig<
+export interface BackshiftConfig<
   TEvents extends Record<string, Record<string, unknown>> = Record<string, Record<string, unknown>>,
 > {
   endpoint: string;

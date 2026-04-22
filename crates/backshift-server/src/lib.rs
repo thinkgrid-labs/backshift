@@ -4,7 +4,7 @@ pub mod routes;
 use std::sync::Arc;
 
 use axum::{Router, routing::get, routing::post};
-use nightshift_adapters::{
+use backshift_adapters::{
     adapter::AdapterRouter,
     amplitude::AmplitudeAdapter,
     facebook::FacebookAdapter,
@@ -16,7 +16,7 @@ use nightshift_adapters::{
     tiktok::TikTokAdapter,
     webhook::WebhookAdapter,
 };
-use nightshift_core::dedup::InMemoryDedupCache;
+use backshift_core::dedup::InMemoryDedupCache;
 use tokio::sync::Mutex;
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::TraceLayer;
@@ -26,7 +26,7 @@ use crate::config::EdgeConfig;
 use crate::routes::{AppState, health_handler, ingest_handler};
 
 pub fn build_app(config: EdgeConfig) -> Router {
-    let mut adapters: Vec<Box<dyn nightshift_adapters::adapter::Adapter>> = Vec::new();
+    let mut adapters: Vec<Box<dyn backshift_adapters::adapter::Adapter>> = Vec::new();
 
     if let (Some(mid), Some(secret)) = (&config.ga4_measurement_id, &config.ga4_api_secret) {
         let mut adapter = Ga4Adapter::new(mid, secret);
@@ -100,7 +100,7 @@ pub fn build_app(config: EdgeConfig) -> Router {
         router: Arc::new(AdapterRouter::new(adapters)),
         dedup: Arc::new(Mutex::new(
             Box::new(InMemoryDedupCache::new(config.dedup_ttl_secs))
-                as Box<dyn nightshift_core::dedup::DedupCache>,
+                as Box<dyn backshift_core::dedup::DedupCache>,
         )),
     });
 

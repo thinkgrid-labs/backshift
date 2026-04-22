@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use futures::future::join_all;
-use nightshift_core::event::BatchedEvent;
+use backshift_core::event::BatchedEvent;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -92,7 +92,7 @@ impl AdapterRouter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nightshift_core::event::{BatchedEvent, EventContext, EventType};
+    use backshift_core::event::{BatchedEvent, EventContext, EventType};
     use std::sync::{Arc, Mutex};
 
     struct RecordingAdapter {

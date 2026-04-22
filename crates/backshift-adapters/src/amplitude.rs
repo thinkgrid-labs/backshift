@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use nightshift_core::event::{BatchedEvent, EventType};
+use backshift_core::event::{BatchedEvent, EventType};
 use serde::Serialize;
 
 use crate::adapter::{Adapter, AdapterError};
@@ -120,7 +120,7 @@ impl Adapter for AmplitudeAdapter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nightshift_core::event::{BatchedEvent, EventContext, EventType};
+    use backshift_core::event::{BatchedEvent, EventContext, EventType};
 
     fn make(t: EventType) -> BatchedEvent {
         BatchedEvent {
@@ -153,7 +153,7 @@ mod tests {
     fn error_event_type_is_dollar_error() {
         let mut ev = make(EventType::Error);
         ev.event_type = EventType::Error;
-        ev.error = Some(nightshift_core::event::SerializedError {
+        ev.error = Some(backshift_core::event::SerializedError {
             message: "oops".into(),
             name: "Error".into(),
             stack: None,

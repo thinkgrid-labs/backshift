@@ -1,6 +1,6 @@
 'use client';
 
-import { Nightshift } from '@nightshift/client';
+import { Backshift } from '@backshift/client';
 
 export function ErrorDemo() {
   function triggerError() {
@@ -8,7 +8,7 @@ export function ErrorDemo() {
       throw new Error('Payment gateway timeout — demo error');
     } catch (err) {
       if (err instanceof Error) {
-        Nightshift.error(err, { component: 'CheckoutFlow', retryable: true });
+        Backshift.error(err, { component: 'CheckoutFlow', retryable: true });
       }
     }
   }
@@ -20,7 +20,7 @@ export function ErrorDemo() {
       (obj as unknown as Record<string, unknown>)['key'];
     } catch (err) {
       if (err instanceof Error) {
-        Nightshift.error(err, { component: 'DataLoader' });
+        Backshift.error(err, { component: 'DataLoader' });
       }
     }
   }

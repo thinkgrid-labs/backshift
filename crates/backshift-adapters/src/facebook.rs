@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use nightshift_core::event::{BatchedEvent, EventType};
+use backshift_core::event::{BatchedEvent, EventType};
 use serde::Serialize;
 
 use crate::adapter::{Adapter, AdapterError};
@@ -136,7 +136,7 @@ struct FbUserData {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nightshift_core::event::{BatchedEvent, EventContext, EventType};
+    use backshift_core::event::{BatchedEvent, EventContext, EventType};
 
     fn make(t: EventType) -> BatchedEvent {
         BatchedEvent {

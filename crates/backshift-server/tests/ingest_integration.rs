@@ -1,8 +1,8 @@
 use axum::body::Body;
 use axum::http::{Request, StatusCode};
 use httpmock::prelude::*;
-use nightshift_server::build_app;
-use nightshift_server::config::EdgeConfig;
+use backshift_server::build_app;
+use backshift_server::config::EdgeConfig;
 use serde_json::json;
 use tower::ServiceExt;
 
@@ -88,7 +88,7 @@ async fn empty_batch_returns_400() {
 
 #[tokio::test]
 async fn pii_stripped_before_webhook() {
-    // PII redaction is unit-tested in nightshift-core/src/pii.rs.
+    // PII redaction is unit-tested in backshift-core/src/pii.rs.
     // Here we verify the sanitized event is still forwarded to the webhook.
     let mock_server = MockServer::start();
     let mock = mock_server.mock(|when, then| {

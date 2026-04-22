@@ -32,14 +32,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build @nightshift/schema
-        run: pnpm --filter @nightshift/schema build
+      - name: Build @backshift/schema
+        run: pnpm --filter @backshift/schema build
 
-      - name: Build @nightshift/client (enforces 5kb size limit)
-        run: pnpm --filter @nightshift/client build
+      - name: Build @backshift/client (enforces 5kb size limit)
+        run: pnpm --filter @backshift/client build
 
-      - name: Test @nightshift/client
-        run: pnpm --filter @nightshift/client test --coverage
+      - name: Test @backshift/client
+        run: pnpm --filter @backshift/client test --coverage
 
       - name: Typecheck
-        run: pnpm --filter @nightshift/client typecheck
+        run: pnpm --filter @backshift/client typecheck

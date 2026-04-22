@@ -1,8 +1,8 @@
 [package]
-name = "nightshift-core"
+name = "backshift-core"
 version = "0.1.0"
 edition = "2021"
-description = "Shared types, PII sanitization, and dedup cache for Nightshift"
+description = "Shared types, PII sanitization, and dedup cache for Backshift"
 
 [dependencies]
 serde = { workspace = true }

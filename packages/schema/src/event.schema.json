@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://nightshift.dev/schemas/event.json",
-  "title": "NightshiftEvent",
-  "description": "Canonical schema for Nightshift telemetry events",
+  "$id": "https://backshift.dev/schemas/event.json",
+  "title": "BackshiftEvent",
+  "description": "Canonical schema for Backshift telemetry events",
   "definitions": {
     "EventType": {
       "type": "string",

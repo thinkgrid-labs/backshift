@@ -1,6 +1,6 @@
 import type { BatchedEvent } from './types.js';
 
-const DB_NAME = 'nightshift_offline';
+const DB_NAME = 'backshift_offline';
 const STORE_NAME = 'failed_events';
 const DB_VERSION = 1;
 

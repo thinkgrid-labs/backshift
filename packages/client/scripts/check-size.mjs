@@ -36,8 +36,8 @@ const gzipSize = await getGzipSize(esmFile);
 const kb = (gzipSize / 1024).toFixed(2);
 
 if (gzipSize > MAX_GZIP_BYTES) {
-  console.error(`\n❌  @nightshift/client bundle too large: ${kb}kb gzipped (limit: 5kb)\n`);
+  console.error(`\n❌  @backshift/client bundle too large: ${kb}kb gzipped (limit: 5kb)\n`);
   process.exit(1);
 }
 
-console.log(`✓  @nightshift/client bundle size: ${kb}kb gzipped (limit: 5kb)`);
+console.log(`✓  @backshift/client bundle size: ${kb}kb gzipped (limit: 5kb)`);

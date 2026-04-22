@@ -1,7 +1,7 @@
 {
-  "name": "@nightshift/schema",
+  "name": "@backshift/schema",
   "version": "0.1.0",
-  "description": "Canonical JSON Schema and TypeScript types for Nightshift events",
+  "description": "Canonical JSON Schema and TypeScript types for Backshift events",
   "type": "module",
   "exports": {
     ".": {

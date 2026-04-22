@@ -1,6 +1,6 @@
 'use client';
 
-import { Nightshift } from '@nightshift/client';
+import { Backshift } from '@backshift/client';
 
 interface TrackButtonProps {
   event: string;
@@ -28,7 +28,7 @@ export function TrackButton({ event, properties, label, variant = 'primary' }: T
         ...parseStyle(colors[variant]),
       }}
       onClick={() => {
-        Nightshift.track(event, { ...properties, triggeredAt: Date.now() });
+        Backshift.track(event, { ...properties, triggeredAt: Date.now() });
       }}
     >
       {label}

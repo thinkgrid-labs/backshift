@@ -1,15 +1,15 @@
 [package]
-name = "nightshift-vercel"
+name = "backshift-vercel"
 version = "0.1.0"
 edition = "2021"
-description = "Vercel Edge Functions WASM target for Nightshift"
+description = "Vercel Edge Functions WASM target for Backshift"
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-nightshift-core = { path = "../nightshift-core" }
-nightshift-adapters = { path = "../nightshift-adapters" }
+backshift-core = { path = "../backshift-core" }
+backshift-adapters = { path = "../backshift-adapters" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 wasm-bindgen = "0.2"

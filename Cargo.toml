@@ -1,10 +1,10 @@
 [workspace]
 members = [
-  "crates/nightshift-core",
-  "crates/nightshift-adapters",
-  "crates/nightshift-worker",
-  "crates/nightshift-vercel",
-  "crates/nightshift-server",
+  "crates/backshift-core",
+  "crates/backshift-adapters",
+  "crates/backshift-worker",
+  "crates/backshift-vercel",
+  "crates/backshift-server",
 ]
 resolver = "2"
 

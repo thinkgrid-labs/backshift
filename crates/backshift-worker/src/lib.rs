@@ -1,4 +1,4 @@
-use nightshift_adapters::{
+use backshift_adapters::{
     adapter::AdapterRouter,
     amplitude::AmplitudeAdapter,
     facebook::FacebookAdapter,
@@ -10,7 +10,7 @@ use nightshift_adapters::{
     tiktok::TikTokAdapter,
     webhook::WebhookAdapter,
 };
-use nightshift_core::{
+use backshift_core::{
     dedup::{DedupCache, InMemoryDedupCache, dedup_key},
     event::IngestBatch,
     pii::sanitize_event,
@@ -43,7 +43,7 @@ async fn kv_or_mem_dedup(
 /// Builds the AdapterRouter from Cloudflare Worker environment bindings.
 /// Each adapter is enabled only if its required secrets are present.
 fn build_router(env: &Env) -> AdapterRouter {
-    let mut adapters: Vec<Box<dyn nightshift_adapters::adapter::Adapter>> = Vec::new();
+    let mut adapters: Vec<Box<dyn backshift_adapters::adapter::Adapter>> = Vec::new();
 
     if let (Ok(mid), Ok(secret)) = (env.var("GA4_MEASUREMENT_ID"), env.var("GA4_API_SECRET")) {
         adapters.push(Box::new(Ga4Adapter::new(mid.to_string(), secret.to_string())));

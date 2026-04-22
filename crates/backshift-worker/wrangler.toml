@@ -1,4 +1,4 @@
-name = "nightshift-worker"
+name = "backshift-worker"
 main = "build/worker/shim.mjs"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
@@ -37,7 +37,7 @@ preview_id = "REPLACE_WITH_YOUR_PREVIEW_KV_NAMESPACE_ID"
 # SENTRY_ENVIRONMENT = "production"
 
 [env.staging]
-name = "nightshift-worker-staging"
+name = "backshift-worker-staging"
 
 [env.staging.vars]
 # SENTRY_ENVIRONMENT = "staging"

@@ -1,9 +1,9 @@
-export { Nightshift, NightshiftClient } from './core.js';
+export { Backshift, BackshiftClient } from './core.js';
 export type {
   BatchedEvent,
   EventContext,
   EventType,
   IngestBatch,
-  NightshiftConfig,
+  BackshiftConfig,
   SerializedError,
 } from './types.js';

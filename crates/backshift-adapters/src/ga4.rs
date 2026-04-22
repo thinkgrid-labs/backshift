@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use nightshift_core::event::{BatchedEvent, EventType};
+use backshift_core::event::{BatchedEvent, EventType};
 use serde::Serialize;
 
 use crate::adapter::{Adapter, AdapterError};

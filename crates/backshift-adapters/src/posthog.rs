@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use nightshift_core::event::{BatchedEvent, EventType};
+use backshift_core::event::{BatchedEvent, EventType};
 use serde::Serialize;
 
 use crate::adapter::{Adapter, AdapterError};
@@ -136,7 +136,7 @@ impl Adapter for PostHogAdapter {
                 .unwrap_or(serde_json::Value::Null)
         });
         props.insert("$current_url".into(), serde_json::Value::String(event.context.url.clone()));
-        props.insert("$lib".into(), serde_json::Value::String("nightshift".into()));
+        props.insert("$lib".into(), serde_json::Value::String("backshift".into()));
         props.insert("$lib_version".into(), serde_json::Value::String("0.1.0".into()));
         props.insert("app_version".into(), serde_json::Value::String(event.context.app_version.clone()));
 
@@ -194,7 +194,7 @@ mod tests {
 
     #[test]
     fn posthog_accepts_all_types() {
-        use nightshift_core::event::{BatchedEvent, EventContext, EventType};
+        use backshift_core::event::{BatchedEvent, EventContext, EventType};
         let adapter = PostHogAdapter::new("phc_test");
         let make = |t: EventType| BatchedEvent {
             event_type: t,

@@ -28,23 +28,23 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Build schema (must publish before client)
-        run: pnpm --filter @nightshift/schema build
+        run: pnpm --filter @backshift/schema build
 
-      - name: Publish @nightshift/schema
-        run: pnpm --filter @nightshift/schema publish --no-git-checks --access public
+      - name: Publish @backshift/schema
+        run: pnpm --filter @backshift/schema publish --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build client
-        run: pnpm --filter @nightshift/client build
+        run: pnpm --filter @backshift/client build
 
-      - name: Publish @nightshift/client
-        run: pnpm --filter @nightshift/client publish --no-git-checks --access public
+      - name: Publish @backshift/client
+        run: pnpm --filter @backshift/client publish --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   build-server-binary:
-    name: Build nightshift-server binary
+    name: Build backshift-server binary
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -54,13 +54,13 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       - name: Build release binary
-        run: cargo build -p nightshift-server --release
+        run: cargo build -p backshift-server --release
 
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
         with:
-          name: nightshift-server-linux-amd64
-          path: target/release/nightshift-server
+          name: backshift-server-linux-amd64
+          path: target/release/backshift-server
 
   github-release:
     name: Create GitHub Release
@@ -71,11 +71,11 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: nightshift-server-linux-amd64
+          name: backshift-server-linux-amd64
           path: ./artifacts
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: ./artifacts/nightshift-server
+          files: ./artifacts/backshift-server
           generate_release_notes: true

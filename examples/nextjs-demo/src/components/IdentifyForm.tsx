@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Nightshift } from '@nightshift/client';
+import { Backshift } from '@backshift/client';
 
 export function IdentifyForm() {
   const [userId, setUserId] = useState('');
@@ -11,7 +11,7 @@ export function IdentifyForm() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!userId.trim()) return;
-    Nightshift.identify(userId.trim(), { plan, source: 'demo' });
+    Backshift.identify(userId.trim(), { plan, source: 'demo' });
     setSent(true);
     setTimeout(() => setSent(false), 2000);
   }

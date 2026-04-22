@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import { NightshiftProvider } from '../components/NightshiftProvider';
+import { BackshiftProvider } from '../components/BackshiftProvider';
 
 export const metadata: Metadata = {
-  title: 'Nightshift Demo',
+  title: 'Backshift Demo',
   description: 'Zero-overhead telemetry gateway — Next.js demo',
 };
 
@@ -10,7 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <NightshiftProvider>{children}</NightshiftProvider>
+        <BackshiftProvider>{children}</BackshiftProvider>
       </body>
     </html>
   );

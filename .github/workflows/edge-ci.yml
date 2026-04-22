@@ -35,10 +35,10 @@ jobs:
         run: cargo fmt --check
 
       - name: Clippy
-        run: cargo clippy -p nightshift-core -p nightshift-adapters -p nightshift-server -- -D warnings
+        run: cargo clippy -p backshift-core -p backshift-adapters -p backshift-server -- -D warnings
 
       - name: Test
-        run: cargo test -p nightshift-core -p nightshift-adapters -p nightshift-server
+        run: cargo test -p backshift-core -p backshift-adapters -p backshift-server
 
   wasm-check:
     name: WASM build check (worker-rs)
@@ -53,5 +53,5 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Check nightshift-worker compiles for wasm32
-        run: cargo check -p nightshift-worker --target wasm32-unknown-unknown
+      - name: Check backshift-worker compiles for wasm32
+        run: cargo check -p backshift-worker --target wasm32-unknown-unknown

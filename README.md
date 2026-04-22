@@ -1,11 +1,11 @@
-# Nightshift
+# Backshift
 
 > **Early Development Notice**
 > This project is a work in progress and has not been tested in production. APIs, configuration, and adapter behaviour may change without notice. Use for exploration and feedback — not for production workloads yet.
 
 **The zero-overhead telemetry gateway for modern web applications.**
 
-> Your frontend works the day shift. Nightshift handles the rest.
+> Your frontend works the day shift. Backshift handles the rest.
 
 ---
 
@@ -23,7 +23,7 @@ Modern web apps need analytics. But every analytics SDK you install is a direct 
 | Mixpanel | ~70kb | Yes |
 | Sentry Browser | ~50kb | Yes |
 | FullStory | ~30kb | Yes |
-| **@nightshift/client** | **< 2kb** | **Never** |
+| **@backshift/client** | **< 2kb** | **Never** |
 
 These scripts download, parse, and execute on the same thread React uses to render your UI. They directly inflate your **LCP**, **TBT**, and **INP** — the Core Web Vitals that determine your Google search ranking and your users' first impression.
 
@@ -58,14 +58,14 @@ Some teams build a thin API route to forward events. It works, but you end up ha
 
 ---
 
-## How Nightshift aims to solve this
+## How Backshift aims to solve this
 
 The core idea: **vendor SDKs are the problem, so don't run them in the browser at all.** Instead, a tiny client fires a single beacon to your own subdomain. An edge worker — running in Rust, on infrastructure you control — translates that event into every vendor's format and fans it out server-to-server.
 
 ```
 Browser                    Edge                    Vendors
 ───────                    ────                    ───────
-@nightshift/client         nightshift-edge         GA4
+@backshift/client         backshift-edge         GA4
   <2kb gzipped             (Rust / WASM)           Mixpanel
   sendBeacon() ──────────► /ingest ──────────────► PostHog
   zero blocking            ↓                       Sentry
@@ -76,7 +76,7 @@ Browser                    Edge                    Vendors
                            Retry on failure        Webhook
 ```
 
-**The client** (`@nightshift/client`, <2kb gzipped) is a typed TypeScript SDK. It batches events, captures UTM params and referrer automatically, and fires them via `navigator.sendBeacon()` — a non-blocking browser API designed exactly for this. No vendor SDK ever loads in the browser. No API keys exposed. No third-party domains contacted.
+**The client** (`@backshift/client`, <2kb gzipped) is a typed TypeScript SDK. It batches events, captures UTM params and referrer automatically, and fires them via `navigator.sendBeacon()` — a non-blocking browser API designed exactly for this. No vendor SDK ever loads in the browser. No API keys exposed. No third-party domains contacted.
 
 **The edge worker** runs on a first-party subdomain (e.g. `telemetry.yourdomain.com`). It enriches events with IP-derived geo data, strips PII before any vendor sees it, deduplicates beacon retries, and fans out to every configured vendor in parallel — with exponential backoff retry on transient failures. All in Rust, with no cold-start penalty on Cloudflare Workers.
 
@@ -112,7 +112,7 @@ Browser                    Edge                    Vendors
 | TikTok Events API | track, error | ✅ |
 | FullStory | identify, custom events¹ | Planned |
 
-¹ FullStory's session replay requires its browser SDK to run in-page (DOM capture can't be proxied). The Nightshift FullStory adapter covers the server-side portion: forwarding `identify` calls to the [FullStory Identity API](https://developer.fullstory.com/server/v2/users/set-user-properties/) and custom events to the [Events API](https://developer.fullstory.com/server/v2/events/create-events/) for cross-device user stitching.
+¹ FullStory's session replay requires its browser SDK to run in-page (DOM capture can't be proxied). The Backshift FullStory adapter covers the server-side portion: forwarding `identify` calls to the [FullStory Identity API](https://developer.fullstory.com/server/v2/users/set-user-properties/) and custom events to the [Events API](https://developer.fullstory.com/server/v2/events/create-events/) for cross-device user stitching.
 
 ---
 
@@ -121,18 +121,18 @@ Browser                    Edge                    Vendors
 ### 1. Add the client SDK
 
 ```bash
-npm install @nightshift/client
+npm install @backshift/client
 ```
 
 ```tsx
 // app/providers.tsx (Next.js App Router)
 'use client';
 import { useEffect } from 'react';
-import { Nightshift } from '@nightshift/client';
+import { Backshift } from '@backshift/client';
 
-export function NightshiftProvider({ children }: { children: React.ReactNode }) {
+export function BackshiftProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    Nightshift.init({
+    Backshift.init({
       endpoint: 'https://telemetry.yourdomain.com/ingest',
       appVersion: process.env.NEXT_PUBLIC_APP_VERSION,
     });
@@ -143,11 +143,11 @@ export function NightshiftProvider({ children }: { children: React.ReactNode }) 
 
 ```tsx
 // Anywhere in your app
-import { Nightshift } from '@nightshift/client';
+import { Backshift } from '@backshift/client';
 
-Nightshift.track('Checkout_Started', { cartValue: 150, currency: 'USD' });
-Nightshift.identify('user_123', { plan: 'premium' });
-Nightshift.error(new Error('Payment gateway timeout'));
+Backshift.track('Checkout_Started', { cartValue: 150, currency: 'USD' });
+Backshift.identify('user_123', { plan: 'premium' });
+Backshift.error(new Error('Payment gateway timeout'));
 ```
 
 **Type-safe event schemas** — define your event map once:
@@ -158,7 +158,7 @@ type MyEvents = {
   Button_Clicked: { buttonName: string };
 };
 
-const client = Nightshift.init<MyEvents>({ endpoint: '...' });
+const client = Backshift.init<MyEvents>({ endpoint: '...' });
 client.track('Checkout_Started', { cartValue: 150, currency: 'USD' }); // ✅
 client.track('Unknown_Event', {});                                      // ❌ type error
 client.track('Checkout_Started', { cartValue: 'oops' });               // ❌ type error
@@ -169,7 +169,7 @@ client.track('Checkout_Started', { cartValue: 'oops' });               // ❌ ty
 **Option A: Cloudflare Workers** (recommended)
 
 ```bash
-cd crates/nightshift-worker
+cd crates/backshift-worker
 npx wrangler secret put GA4_MEASUREMENT_ID
 npx wrangler secret put GA4_API_SECRET
 npx wrangler secret put SENTRY_DSN
@@ -181,24 +181,24 @@ npx wrangler deploy
 **Option B: Standalone Axum server** (Docker / VPS)
 
 ```bash
-cargo build -p nightshift-server --release
+cargo build -p backshift-server --release
 
 GA4_MEASUREMENT_ID=G-XXXXXXXX \
 GA4_API_SECRET=your_secret \
 SENTRY_DSN=https://key@o123.ingest.sentry.io/456 \
 MIXPANEL_TOKEN=your_token \
 POSTHOG_API_KEY=phc_your_key \
-./target/release/nightshift-server
+./target/release/backshift-server
 ```
 
 **Option C: Local development**
 
 ```bash
-cargo run -p nightshift-server
+cargo run -p backshift-server
 # Server starts on http://localhost:8080
 
 # Point your client at it:
-NEXT_PUBLIC_NIGHTSHIFT_ENDPOINT=http://localhost:8080/ingest
+NEXT_PUBLIC_BACKSHIFT_ENDPOINT=http://localhost:8080/ingest
 ```
 
 ---
@@ -227,16 +227,16 @@ NEXT_PUBLIC_NIGHTSHIFT_ENDPOINT=http://localhost:8080/ingest
 ### Repository Structure
 
 ```
-nightshift/
+backshift/
 ├── packages/
-│   ├── schema/     # @nightshift/schema — canonical JSON Schema + TypeScript types
-│   └── client/     # @nightshift/client — <2kb TypeScript SDK
+│   ├── schema/     # @backshift/schema — canonical JSON Schema + TypeScript types
+│   └── client/     # @backshift/client — <2kb TypeScript SDK
 ├── crates/
-│   ├── nightshift-core/      # Rust types, PII sanitizer, dedup cache
-│   ├── nightshift-adapters/  # GA4, Sentry, Mixpanel, PostHog, Webhook adapters
-│   ├── nightshift-server/    # Standalone Axum HTTP server
-│   ├── nightshift-worker/    # Cloudflare Workers target (worker-rs)
-│   └── nightshift-vercel/    # Vercel Edge Functions target (WASM)
+│   ├── backshift-core/      # Rust types, PII sanitizer, dedup cache
+│   ├── backshift-adapters/  # GA4, Sentry, Mixpanel, PostHog, Webhook adapters
+│   ├── backshift-server/    # Standalone Axum HTTP server
+│   ├── backshift-worker/    # Cloudflare Workers target (worker-rs)
+│   └── backshift-vercel/    # Vercel Edge Functions target (WASM)
 └── examples/
     └── nextjs-demo/          # Next.js 15 App Router demo
 ```
@@ -265,7 +265,7 @@ All events share a single canonical schema defined in `packages/schema/src/event
 ### Security Model
 
 - **Secrets never touch the browser.** All vendor API keys live in edge environment variables.
-- **PII is stripped before fan-out.** Emails and token patterns are redacted by regex in `nightshift-core/pii.rs` before any adapter receives the event.
+- **PII is stripped before fan-out.** Emails and token patterns are redacted by regex in `backshift-core/pii.rs` before any adapter receives the event.
 - **IP addresses are stripped.** Client IPs are enriched server-side for geo-lookup and then removed before vendor fan-out.
 - **First-party domain.** Deploy on `telemetry.yourdomain.com` — ad-blockers only block known third-party analytics domains.
 
@@ -278,16 +278,16 @@ All events share a single canonical schema defined in `packages/schema/src/event
 pnpm install
 
 # Run all Rust tests
-cargo test -p nightshift-core -p nightshift-adapters -p nightshift-server
+cargo test -p backshift-core -p backshift-adapters -p backshift-server
 
 # Run TypeScript tests
-pnpm --filter @nightshift/client test
+pnpm --filter @backshift/client test
 
 # Build everything
 pnpm build
 
 # Start local demo
-cargo run -p nightshift-server &
+cargo run -p backshift-server &
 pnpm --filter nextjs-demo dev
 # Open http://localhost:3000
 ```
@@ -296,7 +296,7 @@ pnpm --filter nextjs-demo dev
 
 ## Contributing
 
-Adapters are the most impactful contribution. See `crates/nightshift-adapters/src/adapter.rs` for the `Adapter` trait — implementing a new vendor is ~80 lines of Rust.
+Adapters are the most impactful contribution. See `crates/backshift-adapters/src/adapter.rs` for the `Adapter` trait — implementing a new vendor is ~80 lines of Rust.
 
 Planned: Plausible, FullStory (server-side identify + custom events only — session replay requires in-browser DOM capture and cannot be proxied).
 

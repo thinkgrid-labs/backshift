@@ -6,12 +6,12 @@ use axum::{
     http::{HeaderMap, StatusCode},
     response::IntoResponse,
 };
-use nightshift_core::{
+use backshift_core::{
     dedup::{DedupCache, dedup_key},
     event::IngestBatch,
     pii::sanitize_event,
 };
-use nightshift_adapters::adapter::AdapterRouter;
+use backshift_adapters::adapter::AdapterRouter;
 use tokio::sync::Mutex;
 use tracing::warn;
 

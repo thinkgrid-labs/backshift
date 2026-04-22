@@ -14,7 +14,7 @@ export default function Home() {
     >
       <header style={{ marginBottom: 48 }}>
         <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 8 }}>
-          Nightshift Demo
+          Backshift Demo
         </h1>
         <p style={{ color: '#6b7280', fontSize: 16, lineHeight: 1.6 }}>
           All events below are tracked via{' '}

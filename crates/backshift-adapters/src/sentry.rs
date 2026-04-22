@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use nightshift_core::event::{BatchedEvent, EventType};
+use backshift_core::event::{BatchedEvent, EventType};
 use serde::Serialize;
 
 use crate::adapter::{Adapter, AdapterError};
@@ -52,7 +52,7 @@ impl SentryDsn {
 
     fn auth_header(&self) -> String {
         format!(
-            "Sentry sentry_version=7, sentry_client=nightshift/0.1.0, sentry_key={}",
+            "Sentry sentry_version=7, sentry_client=backshift/0.1.0, sentry_key={}",
             self.public_key
         )
     }
@@ -268,7 +268,7 @@ mod tests {
     #[test]
     fn only_accepts_error_events() {
         let adapter = SentryAdapter::new("https://key@sentry.io/1").unwrap();
-        use nightshift_core::event::{BatchedEvent, EventContext, EventType};
+        use backshift_core::event::{BatchedEvent, EventContext, EventType};
 
         let make = |t: EventType| BatchedEvent {
             event_type: t,

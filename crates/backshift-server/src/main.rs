@@ -1,4 +1,4 @@
-use nightshift_server::{build_app, config::EdgeConfig};
+use backshift_server::{build_app, config::EdgeConfig};
 use tracing::info;
 use tracing_subscriber::{EnvFilter, fmt};
 
@@ -7,7 +7,7 @@ async fn main() {
     fmt()
         .with_env_filter(
             EnvFilter::from_default_env()
-                .add_directive("nightshift=info".parse().unwrap()),
+                .add_directive("backshift=info".parse().unwrap()),
         )
         .json()
         .init();
@@ -18,6 +18,6 @@ async fn main() {
 
     let addr = format!("0.0.0.0:{port}");
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
-    info!(address = %addr, "nightshift-server listening");
+    info!(address = %addr, "backshift-server listening");
     axum::serve(listener, app).await.unwrap();
 }

@@ -1,20 +1,20 @@
 [package]
-name = "nightshift-server"
+name = "backshift-server"
 version = "0.1.0"
 edition = "2021"
-description = "Standalone Axum HTTP server for Nightshift edge proxy"
+description = "Standalone Axum HTTP server for Backshift edge proxy"
 
 [lib]
-name = "nightshift_server"
+name = "backshift_server"
 path = "src/lib.rs"
 
 [[bin]]
-name = "nightshift-server"
+name = "backshift-server"
 path = "src/main.rs"
 
 [dependencies]
-nightshift-core = { path = "../nightshift-core" }
-nightshift-adapters = { path = "../nightshift-adapters" }
+backshift-core = { path = "../backshift-core" }
+backshift-adapters = { path = "../backshift-adapters" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tokio = { workspace = true }

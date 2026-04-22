@@ -1,11 +1,11 @@
 [package]
-name = "nightshift-adapters"
+name = "backshift-adapters"
 version = "0.1.0"
 edition = "2021"
-description = "Fan-out adapter implementations for Nightshift (GA4, Webhook, Sentry)"
+description = "Fan-out adapter implementations for Backshift (GA4, Webhook, Sentry)"
 
 [dependencies]
-nightshift-core = { path = "../nightshift-core" }
+backshift-core = { path = "../backshift-core" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }

@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use nightshift_core::event::{BatchedEvent, EventType};
+use backshift_core::event::{BatchedEvent, EventType};
 use serde::Serialize;
 
 use crate::adapter::{Adapter, AdapterError};
@@ -152,7 +152,7 @@ fn build_context(event: &BatchedEvent) -> SegmentContext {
             serde_json::json!({ "url": r })
         }),
         campaign,
-        library: SegmentLibrary { name: "nightshift", version: "0.1.0" },
+        library: SegmentLibrary { name: "backshift", version: "0.1.0" },
     }
 }
 
@@ -234,7 +234,7 @@ impl Adapter for SegmentAdapter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nightshift_core::event::{BatchedEvent, EventContext, EventType};
+    use backshift_core::event::{BatchedEvent, EventContext, EventType};
 
     fn make(t: EventType) -> BatchedEvent {
         BatchedEvent {

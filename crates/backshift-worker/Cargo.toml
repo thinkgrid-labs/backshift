@@ -1,15 +1,15 @@
 [package]
-name = "nightshift-worker"
+name = "backshift-worker"
 version = "0.1.0"
 edition = "2021"
-description = "Cloudflare Workers target for Nightshift (worker-rs)"
+description = "Cloudflare Workers target for Backshift (worker-rs)"
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-nightshift-core = { path = "../nightshift-core" }
-nightshift-adapters = { path = "../nightshift-adapters" }
+backshift-core = { path = "../backshift-core" }
+backshift-adapters = { path = "../backshift-adapters" }
 worker = "0.4"
 serde = { workspace = true }
 serde_json = { workspace = true }
