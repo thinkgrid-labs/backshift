@@ -11,7 +11,11 @@
 
 ## The Problem
 
-Every analytics SDK you install is a tax on your users.
+Modern web apps need analytics. But every analytics SDK you install is a direct tax on your users' experience — and on your users' privacy.
+
+### The pain today
+
+**1. Every SDK ships its own runtime to the browser.**
 
 | SDK | Size | Blocks Main Thread? |
 |---|---|---|
@@ -21,13 +25,42 @@ Every analytics SDK you install is a tax on your users.
 | FullStory | ~30kb | Yes |
 | **@nightshift/client** | **< 2kb** | **Never** |
 
-These scripts download, parse, and execute on the same thread React uses to render your UI. They directly inflate your **LCP**, **TBT**, and **INP** — the Core Web Vitals that determine your Google search ranking.
+These scripts download, parse, and execute on the same thread React uses to render your UI. They directly inflate your **LCP**, **TBT**, and **INP** — the Core Web Vitals that determine your Google search ranking and your users' first impression.
 
-And then they leak your users' data to a dozen third-party domains.
+**2. Your API keys live in the browser.**
+
+Every vendor SDK you load exposes your Mixpanel token, your GA4 Measurement ID, your PostHog key — in plain sight in your JS bundle. Anyone can scrape them, replay events, or flood your analytics with fake data.
+
+**3. Your users' data flows directly to vendor servers.**
+
+Raw IP addresses, emails accidentally passed in properties, user agents — all of it travels from your user's browser to GA4, Mixpanel, Sentry, and however many other vendors you've added this quarter. You have no control over what leaves.
+
+**4. Ad-blockers kill your data.**
+
+uBlock Origin, Privacy Badger, and browser-level tracking prevention block requests to known analytics domains. A meaningful fraction of your users — often your most technical ones — are invisible in your dashboards.
+
+**5. Stack fragmentation gets worse as you scale.**
+
+You add GA4 for marketing. Mixpanel for product. Sentry for errors. Amplitude for growth. Each one adds its own SDK, its own cookie, its own network request pattern, its own privacy footprint. There's no single place to audit what data is leaving your app.
 
 ---
 
-## How Nightshift Works
+### Existing approaches — and why they still fall short
+
+**Google Tag Manager / other tag managers**
+Load vendor scripts dynamically, but the scripts still run on the main thread and still phone home to vendor servers directly. You've added an abstraction layer, not solved the problem.
+
+**Segment / RudderStack**
+A server-side CDP gives you a single integration point, but you still need a vendor JS SDK in the browser to capture events (`analytics.js` is ~70kb), and you're adding another SaaS layer with its own pricing, data retention terms, and privacy surface.
+
+**Rolling your own proxy**
+Some teams build a thin API route to forward events. It works, but you end up hand-rolling PII sanitization, dedup, retry logic, geo enrichment, and adapter-specific payload translation for every vendor — over and over.
+
+---
+
+## How Nightshift aims to solve this
+
+The core idea: **vendor SDKs are the problem, so don't run them in the browser at all.** Instead, a tiny client fires a single beacon to your own subdomain. An edge worker — running in Rust, on infrastructure you control — translates that event into every vendor's format and fans it out server-to-server.
 
 ```
 Browser                    Edge                    Vendors
@@ -36,29 +69,33 @@ Browser                    Edge                    Vendors
   <2kb gzipped             (Rust / WASM)           Mixpanel
   sendBeacon() ──────────► /ingest ──────────────► PostHog
   zero blocking            ↓                       Sentry
-                           PII sanitize            Webhook
-                           Dedup
-                           Enrich (IP, UA, geo)
-                           Fan-out (parallel)
+                           PII sanitize            Amplitude
+                           Dedup                   Segment
+                           Enrich (IP, UA, geo)    Facebook CAPI
+                           Fan-out (parallel)      TikTok
+                           Retry on failure        Webhook
 ```
 
-**The client** is a typed TypeScript SDK that batches events and fires them via `navigator.sendBeacon()`. No main-thread work. No external script tags. No vendor SDK loaded in the browser.
+**The client** (`@nightshift/client`, <2kb gzipped) is a typed TypeScript SDK. It batches events, captures UTM params and referrer automatically, and fires them via `navigator.sendBeacon()` — a non-blocking browser API designed exactly for this. No vendor SDK ever loads in the browser. No API keys exposed. No third-party domains contacted.
 
-**The edge worker** runs on a first-party subdomain (e.g. `telemetry.yourdomain.com`). It holds all your API keys, strips PII before fan-out, and translates your generic events into vendor-specific API calls — all in Rust, at the network edge.
+**The edge worker** runs on a first-party subdomain (e.g. `telemetry.yourdomain.com`). It enriches events with IP-derived geo data, strips PII before any vendor sees it, deduplicates beacon retries, and fans out to every configured vendor in parallel — with exponential backoff retry on transient failures. All in Rust, with no cold-start penalty on Cloudflare Workers.
 
 ---
 
 ## Features
 
 - **< 2kb gzipped** TypeScript SDK — strict generic types, zero runtime dependencies
-- **`navigator.sendBeacon()`** transport — zero main-thread blocking
+- **`navigator.sendBeacon()`** transport — zero main-thread blocking, designed to survive tab close
+- **Auto-capture** — UTM params, referrer, page title, and viewport collected on every event without configuration
+- **Auto-pageview** — opt-in `Page_Viewed` tracking that works with SPA navigation (patches `history.pushState`)
 - **Smart batching** — flushes on 5s timer, 20-event queue, or tab close
-- **PII sanitization** — emails and API tokens stripped before fan-out
-- **Dedup** — sliding window prevents double-fires from beacon retries
-- **Ad-blocker bypass** — runs on your own subdomain, not a third-party domain
-- **GDPR/CCPA ready** — IP addresses never reach vendors
-- **Offline resilience** — IndexedDB queue for mobile users losing connectivity
-- **Multi-platform** — deploys to Cloudflare Workers, Vercel Edge, or standalone Axum server
+- **PII sanitization** — emails and API tokens stripped from all event fields before fan-out
+- **Dedup** — per-request in-memory dedup; persistent cross-request dedup via Cloudflare KV when bound
+- **Retry with backoff** — transient vendor failures (5xx, network errors, 429) retried up to 3× with exponential backoff; 4xx failures dropped immediately
+- **Ad-blocker bypass** — runs on your own subdomain, not a third-party analytics domain
+- **GDPR/CCPA ready** — IP addresses used only for geo enrichment then stripped before any vendor receives the event
+- **Offline resilience** — IndexedDB queue for mobile users losing connectivity; drained on next init
+- **Multi-platform** — deploys to Cloudflare Workers (recommended), standalone Axum server, or Docker
 
 ### Supported Adapters
 
