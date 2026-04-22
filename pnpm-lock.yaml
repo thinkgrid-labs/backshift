@@ -20,7 +20,7 @@ importers:
 
   examples/nextjs-demo:
     dependencies:
-      '@nightshift/client':
+      '@backshift/client':
         specifier: workspace:*
         version: link:../../packages/client
       next:
@@ -48,7 +48,7 @@ importers:
 
   packages/client:
     devDependencies:
-      '@nightshift/schema':
+      '@backshift/schema':
         specifier: workspace:*
         version: link:../schema
       '@vitest/coverage-v8':

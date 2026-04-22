@@ -2,7 +2,7 @@ name: Edge CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
     paths:
       - 'crates/**'
       - 'Cargo.toml'
